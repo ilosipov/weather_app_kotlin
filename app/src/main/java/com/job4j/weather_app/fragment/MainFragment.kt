@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.job4j.weather_app.R
+import com.job4j.weather_app.location.AppLocationManager
 
 /**
  * Класс MainFragment - реализует представление главного экрана
@@ -23,6 +24,14 @@ class MainFragment : Fragment() {
         Log.d(TAG, "onCreateView: initialization MainFragment.")
         val view = inflater.inflate(R.layout.fragment_main, container, false)
 
+        initLocation()
+
         return view
+    }
+
+    private fun initLocation() {
+        val location = AppLocationManager(this.context!!)
+        Log.d(TAG, "onCreateView: latitude = ${location.getLatitude()}")
+        Log.d(TAG, "onCreateView: longitude = ${location.getLongitude()}")
     }
 }
