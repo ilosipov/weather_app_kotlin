@@ -1,5 +1,3 @@
-@file:Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-
 package com.job4j.weather_app.location
 
 import android.Manifest
@@ -19,28 +17,27 @@ import androidx.core.app.ActivityCompat
  * @version $Id$
  */
 
+@Suppress("ControlFlowWithEmptyBody")
 class AppLocationManager(context: Context) : LocationListener {
-    private val locationManager : LocationManager =
+
+    private var locationManager : LocationManager =
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private val criteria : Criteria = Criteria()
-    private lateinit var longitude : String
-    private lateinit var latitude : String
-    private val provider : String
+    private var longitude : String = ""
+    private var latitude : String = ""
 
     init {
         criteria.accuracy = Criteria.ACCURACY_FINE
-        provider = locationManager.getBestProvider(criteria, true)
+        val provider = locationManager.getBestProvider(criteria, true)
+
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0F, this)
-            setMostRecentLocation(locationManager.getLastKnownLocation(provider))
         }
+        val location = locationManager.getLastKnownLocation(provider!!)
+        onLocationChanged(location)
     }
-
-    private fun setMostRecentLocation(lastKnowLocation: Location?) {}
 
     fun getLatitude() : String {
         return latitude
