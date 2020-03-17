@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.airbnb.lottie.LottieAnimationView
 import com.job4j.weather_app.R
 import com.job4j.weather_app.REQUEST_LOCATION_PERMISSION
 import com.job4j.weather_app.location.AppLocationManager
@@ -34,6 +35,7 @@ class MainFragment : Fragment() {
     private lateinit var currentTemp : TextView
     private lateinit var currentName : TextView
     private lateinit var currentDescription : TextView
+    private lateinit var currentIcon : LottieAnimationView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -44,6 +46,7 @@ class MainFragment : Fragment() {
         currentTemp = view.findViewById(R.id.current_temp)
         currentName = view.findViewById(R.id.current_name)
         currentDescription = view.findViewById(R.id.current_description)
+        currentIcon = view.findViewById(R.id.current_icon)
 
         getLocationPermission()
         if (locationPermissionGranted) {
@@ -102,7 +105,8 @@ class MainFragment : Fragment() {
             currentMain.text = currentWeather.weather!![0].main.trim()
             currentDescription.text = currentWeather.weather!![0].description.trim()
             currentTemp.text = String.format("%s°С", currentWeather.main!!.temp.toInt())
-            currentName.text = currentWeather.name
+            currentName.text = currentWeather.name.trim()
+            currentIcon.setAnimation("${currentWeather.weather!![0].icon}.json")
         })
     }
 }

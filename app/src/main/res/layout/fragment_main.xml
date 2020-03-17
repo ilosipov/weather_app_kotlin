@@ -7,31 +7,49 @@
 
     <TextView
         android:id="@+id/current_main"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:text="Main"
+        android:textColor="@android:color/black"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </TextView>
 
     <TextView
         android:id="@+id/current_description"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="16sp"
         android:text="Description"
-        android:textSize="20sp"
         android:textColor="@android:color/black"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_main">
 
     </TextView>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/current_icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="100dp"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/current_name"
+        app:layout_constraintTop_toBottomOf="@+id/current_description">
+
+    </com.airbnb.lottie.LottieAnimationView>
 
     <TextView
         android:id="@+id/current_name"
@@ -39,21 +57,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text="Pskov"
-        android:textSize="24sp"
         android:textColor="@android:color/black"
-        app:layout_constraintBottom_toTopOf="@+id/current_temp"
-        app:layout_constraintStart_toStartOf="parent">
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/current_temp">
 
     </TextView>
 
     <TextView
         android:id="@+id/current_temp"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="80dp"
         android:layout_marginStart="20dp"
         android:text="20"
-        android:textSize="50sp"
+        android:textSize="60sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
