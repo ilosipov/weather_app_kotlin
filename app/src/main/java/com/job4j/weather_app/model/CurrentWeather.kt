@@ -36,7 +36,7 @@ data class CurrentWeather(
     override fun hashCode(): Int {
         var result = weather?.hashCode() ?: 0
         result = 31 * result + (main?.hashCode() ?: 0)
-        result = 31 * result + (wind.hashCode() ?: 0)
+        result = 31 * result + wind.hashCode()
         result = 31 * result + name.hashCode()
         return result
     }

@@ -17,10 +17,9 @@ interface WeatherApi {
 
     @GET("weather")
     fun weather(
-        @Query("lat") lat: Double,
-        @Query("lon") lon: Double,
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
         @Query("units") units: String,
-        @Query("lang") lang: String,
         @Query("appid") key: String) : Single<CurrentWeather>
 
     @GET("forecast")
@@ -28,6 +27,5 @@ interface WeatherApi {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("units") units: String,
-        @Query("lang") lang: String,
         @Query("appid") key: String) : Single<ForecastWeather>
 }

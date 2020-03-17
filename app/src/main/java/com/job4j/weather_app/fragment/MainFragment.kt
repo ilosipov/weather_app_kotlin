@@ -7,12 +7,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.job4j.weather_app.LOCATION_PERMISSION_CODE
+import androidx.lifecycle.MutableLiveData
 import com.job4j.weather_app.R
+import com.job4j.weather_app.REQUEST_LOCATION_PERMISSION
 import com.job4j.weather_app.location.AppLocationManager
+import com.job4j.weather_app.model.CurrentWeather
+import com.job4j.weather_app.network.RequestWeather
 
 /**
  * Класс MainFragment - реализует представление главного экрана
@@ -23,14 +26,21 @@ import com.job4j.weather_app.location.AppLocationManager
 
 class MainFragment : Fragment() {
     private val TAG = "MainFragment"
+    private var locationPermissionGranted = false
+    private val callbackCurrentWeather = MutableLiveData<CurrentWeather>()
+
+    private lateinit var textView: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         Log.d(TAG, "onCreateView: initialization MainFragment.")
         val view = inflater.inflate(R.layout.fragment_main, container, false)
+        textView = view.findViewById(R.id.textView)
 
         getLocationPermission()
-
+        if (locationPermissionGranted) {
+            updateUI()
+        }
         return view
     }
 
@@ -42,23 +52,42 @@ class MainFragment : Fragment() {
         )
 
         if (activity != null) {
-            if (ContextCompat.checkSelfPermission(activity!!.applicationContext,
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(activity!!.applicationContext,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    initLocation()
-                } else {
-                    ActivityCompat.requestPermissions(activity!!, permissions, LOCATION_PERMISSION_CODE)
-                }
+            if (ContextCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(permissions, REQUEST_LOCATION_PERMISSION)
+                Log.d(TAG, "getLocationPermission: request location false.")
             } else {
-                ActivityCompat.requestPermissions(activity!!, permissions, LOCATION_PERMISSION_CODE)
+                locationPermissionGranted = true
+                Log.d(TAG, "getLocationPermission: request location true.")
             }
         }
     }
 
-    private fun initLocation() {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+        grantResults: IntArray) {
+        Log.d(TAG, "onRequestPermissionsResult: called.")
+        when (requestCode) {
+            REQUEST_LOCATION_PERMISSION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    updateUI()
+                    locationPermissionGranted = true
+                    Log.d(TAG, "onRequestPermissionsResult: locations permission true.")
+                } else {
+                    Log.d(TAG, "onRequestPermissionsResult: location permission false.")
+                }
+            }
+        }
+    }
+
+    private fun updateUI() {
+        Log.d(TAG, "updateUI")
         val location = AppLocationManager(context!!)
         Log.d(TAG, "onCreateView: latitude = ${location.getLatitude()}")
         Log.d(TAG, "onCreateView: longitude = ${location.getLongitude()}")
+
+        textView.text = String.format("latitude: %s; longitude: %s", location.getLatitude(), location.getLongitude())
+        RequestWeather().getCurrentWeather(location.getLatitude(), location.getLongitude(), callbackCurrentWeather)
     }
 }

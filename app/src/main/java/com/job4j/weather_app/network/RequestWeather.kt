@@ -3,7 +3,6 @@ package com.job4j.weather_app.network
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.job4j.weather_app.KEY_API
-import com.job4j.weather_app.LANG
 import com.job4j.weather_app.UNITS
 import com.job4j.weather_app.WEATHER_URL
 import com.job4j.weather_app.model.CurrentWeather
@@ -40,13 +39,14 @@ class RequestWeather {
             .build()
     }
 
-    fun getCurrentWeather(lat: Double, lon: Double, callback: MutableLiveData<CurrentWeather>) {
-        weatherApi.weather(lat, lon, UNITS, LANG, KEY_API)
+    fun getCurrentWeather(lat: String, lon: String, callback: MutableLiveData<CurrentWeather>) {
+        weatherApi.weather(lat, lon, UNITS, KEY_API)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableSingleObserver<CurrentWeather>() {
                 override fun onSuccess(currentWeather: CurrentWeather) {
                     Log.d(TAG, "onSuccess: $currentWeather")
+                    callback.postValue(currentWeather)
                 }
 
                 override fun onError(error: Throwable) {
