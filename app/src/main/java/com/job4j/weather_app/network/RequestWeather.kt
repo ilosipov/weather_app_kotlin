@@ -57,6 +57,6 @@ class RequestWeather {
             })
     }
 
-    val weatherApi: WeatherApi
+    private val weatherApi: WeatherApi
         get() = retrofit.create(WeatherApi::class.java)
 }

@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.job4j.weather_app.R
 import com.job4j.weather_app.REQUEST_LOCATION_PERMISSION
 import com.job4j.weather_app.location.AppLocationManager
@@ -29,13 +30,20 @@ class MainFragment : Fragment() {
     private var locationPermissionGranted = false
     private val callbackCurrentWeather = MutableLiveData<CurrentWeather>()
 
-    private lateinit var textView: TextView
+    private lateinit var currentMain : TextView
+    private lateinit var currentTemp : TextView
+    private lateinit var currentName : TextView
+    private lateinit var currentDescription : TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         Log.d(TAG, "onCreateView: initialization MainFragment.")
         val view = inflater.inflate(R.layout.fragment_main, container, false)
-        textView = view.findViewById(R.id.textView)
+
+        currentMain = view.findViewById(R.id.current_main)
+        currentTemp = view.findViewById(R.id.current_temp)
+        currentName = view.findViewById(R.id.current_name)
+        currentDescription = view.findViewById(R.id.current_description)
 
         getLocationPermission()
         if (locationPermissionGranted) {
@@ -81,13 +89,20 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun updateUI() {
-        Log.d(TAG, "updateUI")
-        val location = AppLocationManager(context!!)
-        Log.d(TAG, "onCreateView: latitude = ${location.getLatitude()}")
-        Log.d(TAG, "onCreateView: longitude = ${location.getLongitude()}")
+    private val currentWeatherResponse : MutableLiveData<CurrentWeather>
+        get() = callbackCurrentWeather
 
-        textView.text = String.format("latitude: %s; longitude: %s", location.getLatitude(), location.getLongitude())
+    private fun updateUI() {
+        val location = AppLocationManager(context!!)
+        Log.d(TAG, "updateUI: latitude = ${location.getLatitude()}, longitude = ${location.getLongitude()}")
+
         RequestWeather().getCurrentWeather(location.getLatitude(), location.getLongitude(), callbackCurrentWeather)
+        currentWeatherResponse.observe(viewLifecycleOwner, Observer {
+                currentWeather: CurrentWeather ->
+            currentMain.text = currentWeather.weather!![0].main.trim()
+            currentDescription.text = currentWeather.weather!![0].description.trim()
+            currentTemp.text = String.format("%s°С", currentWeather.main!!.temp.toInt())
+            currentName.text = currentWeather.name
+        })
     }
 }
