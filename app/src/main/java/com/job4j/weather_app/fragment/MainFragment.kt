@@ -12,12 +12,16 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.job4j.weather_app.R
 import com.job4j.weather_app.REQUEST_LOCATION_PERMISSION
+import com.job4j.weather_app.adapter.CurrentAdapter
 import com.job4j.weather_app.location.AppLocationManager
 import com.job4j.weather_app.model.CurrentWeather
 import com.job4j.weather_app.network.RequestWeather
+import kotlinx.android.synthetic.main.fragment_main.*
 
 /**
  * Класс MainFragment - реализует представление главного экрана
@@ -36,6 +40,7 @@ class MainFragment : Fragment() {
     private lateinit var currentName : TextView
     private lateinit var currentDescription : TextView
     private lateinit var currentIcon : LottieAnimationView
+    private lateinit var currentRecycler : RecyclerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,6 +52,7 @@ class MainFragment : Fragment() {
         currentName = view.findViewById(R.id.current_name)
         currentDescription = view.findViewById(R.id.current_description)
         currentIcon = view.findViewById(R.id.current_icon)
+        currentRecycler = view.findViewById(R.id.recycler_current)
 
         getLocationPermission()
         if (locationPermissionGranted) {
@@ -107,6 +113,25 @@ class MainFragment : Fragment() {
             currentTemp.text = String.format("%s°С", currentWeather.main!!.temp.toInt())
             currentName.text = currentWeather.name.trim()
             currentIcon.setAnimation("${currentWeather.weather!![0].icon}.json")
+
+            currentRecycler.layoutManager = LinearLayoutManager(context,
+                LinearLayoutManager.HORIZONTAL, false)
+            val adapter = CurrentAdapter(context!!, R.layout.view_current,
+                initInfoMap(currentWeather.wind?.speed, currentWeather.main?.humidity,
+                currentWeather.main?.pressure, currentWeather.main?.tempMin,
+                    currentWeather.main?.tempMax))
+            currentRecycler.adapter = adapter
         })
+    }
+
+    private fun initInfoMap(wind: Double?, humidity: Double?, pressure: Double?, min: Double?,
+                            max: Double?) : Map<String, String> {
+        return mapOf(
+            getString(R.string.title_wind) to String.format("%skm/h", wind?.toInt()),
+            getString(R.string.title_humidity) to String.format("%s%%", humidity?.toInt()),
+            getString(R.string.title_pressure) to String.format("%smm", pressure?.toInt()),
+            getString(R.string.title_min_temp) to String.format("%s°С", min?.toInt()),
+            getString(R.string.title_max_temp) to String.format("%s°С", max?.toInt())
+        )
     }
 }
