@@ -21,7 +21,6 @@ import com.job4j.weather_app.adapter.CurrentAdapter
 import com.job4j.weather_app.location.AppLocationManager
 import com.job4j.weather_app.model.CurrentWeather
 import com.job4j.weather_app.network.RequestWeather
-import kotlinx.android.synthetic.main.fragment_main.*
 
 /**
  * Класс MainFragment - реализует представление главного экрана
@@ -110,7 +109,7 @@ class MainFragment : Fragment() {
                 currentWeather: CurrentWeather ->
             currentMain.text = currentWeather.weather!![0].main.trim()
             currentDescription.text = currentWeather.weather!![0].description.trim()
-            currentTemp.text = String.format("%s°С", currentWeather.main!!.temp.toInt())
+            currentTemp.text = String.format("%s°", currentWeather.main!!.temp.toInt())
             currentName.text = currentWeather.name.trim()
             currentIcon.setAnimation("${currentWeather.weather!![0].icon}.json")
 
