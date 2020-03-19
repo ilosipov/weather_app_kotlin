@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -40,6 +41,7 @@ class MainFragment : Fragment() {
     private lateinit var currentDescription : TextView
     private lateinit var currentIcon : LottieAnimationView
     private lateinit var currentRecycler : RecyclerView
+    private lateinit var btnForecast : Button
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -52,6 +54,8 @@ class MainFragment : Fragment() {
         currentDescription = view.findViewById(R.id.current_description)
         currentIcon = view.findViewById(R.id.current_icon)
         currentRecycler = view.findViewById(R.id.recycler_current)
+        btnForecast = view.findViewById(R.id.btn_forecast)
+        btnForecast.setOnClickListener(this::onClickForecast)
 
         getLocationPermission()
         if (locationPermissionGranted) {
@@ -132,5 +136,11 @@ class MainFragment : Fragment() {
             getString(R.string.title_min_temp) to String.format("%s°С", min?.toInt()),
             getString(R.string.title_max_temp) to String.format("%s°С", max?.toInt())
         )
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun onClickForecast(v: View) {
+        activity?.supportFragmentManager?.let {
+            ForecastBottomFragment().show(it, "forecast_fragment") }
     }
 }
