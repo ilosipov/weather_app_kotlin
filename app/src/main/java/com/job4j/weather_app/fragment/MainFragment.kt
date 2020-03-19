@@ -7,9 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -49,10 +50,18 @@ class MainFragment : Fragment() {
     private var lat : String = ""
     private var lon : String = ""
 
+    private lateinit var animTop : Animation
+    private lateinit var animCenter : Animation
+    private lateinit var animBottom : Animation
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         Log.d(TAG, "onCreateView: initialization MainFragment.")
         val view = inflater.inflate(R.layout.fragment_main, container, false)
+
+        animTop = AnimationUtils.loadAnimation(context, R.anim.anim_current_top)
+        animCenter = AnimationUtils.loadAnimation(context, R.anim.anim_current_center)
+        animBottom = AnimationUtils.loadAnimation(context, R.anim.anim_current_bottom)
 
         currentMain = view.findViewById(R.id.current_main)
         currentTemp = view.findViewById(R.id.current_temp)
@@ -120,6 +129,8 @@ class MainFragment : Fragment() {
         RequestWeather().getCurrentWeather(location.getLatitude(), location.getLongitude(), callbackCurrentWeather)
         currentWeatherResponse.observe(viewLifecycleOwner, Observer {
                 currentWeather: CurrentWeather ->
+            initAnimation()
+
             currentMain.text = currentWeather.weather!![0].main.trim()
             currentDescription.text = currentWeather.weather!![0].description.trim()
             currentTemp.text = String.format("%s°", currentWeather.main!!.temp.toInt())
@@ -138,6 +149,17 @@ class MainFragment : Fragment() {
             currentImageView.visibility = View.VISIBLE
             btnForecast.visibility = View.VISIBLE
         })
+    }
+
+    private fun initAnimation() {
+        currentMain.startAnimation(animTop)
+        currentDescription.startAnimation(animTop)
+        currentIcon.startAnimation(animCenter)
+        currentName.startAnimation(animCenter)
+        currentTemp.startAnimation(animCenter)
+        currentRecycler.startAnimation(animCenter)
+        currentImageView.startAnimation(animBottom)
+        btnForecast.startAnimation(animBottom)
     }
 
     private fun initInfoMap(wind: Double?, humidity: Double?, pressure: Double?, min: Double?,
