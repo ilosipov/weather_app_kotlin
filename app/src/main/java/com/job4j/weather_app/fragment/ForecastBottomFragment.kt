@@ -1,11 +1,20 @@
 package com.job4j.weather_app.fragment
 
-import android.annotation.SuppressLint
-import android.app.Dialog
-import android.util.Log
+import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ProgressBar
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.job4j.weather_app.R
+import com.job4j.weather_app.adapter.ForecastAdapter
+import com.job4j.weather_app.model.Day
+import com.job4j.weather_app.model.ForecastWeather
+import com.job4j.weather_app.network.RequestWeather
 
 /**
  * Класс ForecastBottomFragment - фрагмент с прогнозом погоды на 5 дней
@@ -15,16 +24,46 @@ import com.job4j.weather_app.R
  */
 
 class ForecastBottomFragment : BottomSheetDialogFragment() {
-    private val TAG = "ForecastBottomFragment"
+    private val callbackForecastWeather = MutableLiveData<ForecastWeather>()
 
-    @SuppressLint("RestrictedApi")
-    override fun setupDialog(dialog: Dialog, style: Int) {
-        super.setupDialog(dialog, style)
-        Log.d(TAG, "setupDialog: start bottom forecast fragment.")
-        val view = LayoutInflater.from(context).inflate(R.layout.fragment_bottom_forecast, null)
+    private lateinit var forecastRecycler : RecyclerView
+    private lateinit var progressForecast : ProgressBar
 
-        dialog.setContentView(view)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_bottom_forecast, container, false)
+
+        forecastRecycler = view.findViewById(R.id.recycler_forecast)
+        progressForecast = view.findViewById(R.id.progress_forecast)
+
+        return view
     }
 
+    private fun updateUI(lat: String, lon: String) {
+        RequestWeather().getForecastWeather(lat, lon, callbackForecastWeather)
+        forecastWeatherResponse.observe(viewLifecycleOwner, Observer {
+                forecastWeather: ForecastWeather? ->
+            forecastWeather?.let {
+                val days: List<Day>? = forecastWeather.days
+                days?.let {
+                    forecastRecycler.layoutManager = LinearLayoutManager(context)
+                    forecastRecycler.adapter = ForecastAdapter(context!!, R.layout.view_forecast, days)
+                }
+            }
+            progressForecast.visibility = View.GONE
+        })
+    }
 
+    private val forecastWeatherResponse : MutableLiveData<ForecastWeather>
+        get() = callbackForecastWeather
+
+    override fun onStart() {
+        super.onStart()
+        val bundle = arguments
+        if (bundle != null) {
+            updateUI(
+                bundle.getString("current_latitude", ""),
+                bundle.getString("current_longitude", "")
+            )
+        }
+    }
 }

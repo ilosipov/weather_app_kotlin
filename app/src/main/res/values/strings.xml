@@ -6,4 +6,6 @@
     <string name="title_pressure">Pressure</string>
     <string name="title_min_temp">Min Temp</string>
     <string name="title_max_temp">Max Temp</string>
+    <string name="title_forecast">Forecast on 5 days</string>
+    <string name="btn_forecast">Forecast</string>
 </resources>

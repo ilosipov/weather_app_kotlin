@@ -24,8 +24,8 @@ interface WeatherApi {
 
     @GET("forecast")
     fun forecast(
-        @Query("lat") lat: Double,
-        @Query("lon") lon: Double,
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
         @Query("units") units: String,
         @Query("appid") key: String) : Single<ForecastWeather>
 }

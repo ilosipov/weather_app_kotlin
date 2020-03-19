@@ -94,7 +94,8 @@
         android:layout_marginEnd="30dp"
         android:layout_marginStart="30dp"
         android:layout_marginBottom="8dp"
-        android:text="Forecast"
+        android:text="@string/btn_forecast"
+        android:visibility="gone"
         android:background="@drawable/background_btn_forecast_anim"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,16 +104,31 @@
     </Button>
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/current_image_view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="30dp"
         android:src="@color/colorAccent"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="ContentDescription">
 
     </ImageView>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/current_progress_anim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="location.json"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+    </com.airbnb.lottie.LottieAnimationView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

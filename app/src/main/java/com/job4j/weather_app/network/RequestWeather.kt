@@ -6,6 +6,7 @@ import com.job4j.weather_app.KEY_API
 import com.job4j.weather_app.UNITS
 import com.job4j.weather_app.WEATHER_URL
 import com.job4j.weather_app.model.CurrentWeather
+import com.job4j.weather_app.model.ForecastWeather
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
@@ -53,7 +54,23 @@ class RequestWeather {
                     Log.e(TAG, "onError: $error")
                     error.printStackTrace()
                 }
+            })
+    }
 
+    fun getForecastWeather(lat: String, lon: String, callback: MutableLiveData<ForecastWeather>) {
+        weatherApi.forecast(lat, lon, UNITS, KEY_API)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : DisposableSingleObserver<ForecastWeather>() {
+                override fun onSuccess(forecastWeather: ForecastWeather) {
+                    Log.d(TAG, "onSuccess: $forecastWeather")
+                    callback.postValue(forecastWeather)
+                }
+
+                override fun onError(error: Throwable) {
+                    Log.e(TAG, "onError: $error")
+                    error.printStackTrace()
+                }
             })
     }
 

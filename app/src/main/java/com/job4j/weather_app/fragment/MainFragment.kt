@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -42,6 +44,10 @@ class MainFragment : Fragment() {
     private lateinit var currentIcon : LottieAnimationView
     private lateinit var currentRecycler : RecyclerView
     private lateinit var btnForecast : Button
+    private lateinit var currentImageView : ImageView
+    private lateinit var currentProgress : LottieAnimationView
+    private var lat : String = ""
+    private var lon : String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -56,6 +62,8 @@ class MainFragment : Fragment() {
         currentRecycler = view.findViewById(R.id.recycler_current)
         btnForecast = view.findViewById(R.id.btn_forecast)
         btnForecast.setOnClickListener(this::onClickForecast)
+        currentImageView = view.findViewById(R.id.current_image_view)
+        currentProgress = view.findViewById(R.id.current_progress_anim)
 
         getLocationPermission()
         if (locationPermissionGranted) {
@@ -106,7 +114,8 @@ class MainFragment : Fragment() {
 
     private fun updateUI() {
         val location = AppLocationManager(context!!)
-        Log.d(TAG, "updateUI: latitude = ${location.getLatitude()}, longitude = ${location.getLongitude()}")
+        lat = location.getLatitude()
+        lon = location.getLongitude()
 
         RequestWeather().getCurrentWeather(location.getLatitude(), location.getLongitude(), callbackCurrentWeather)
         currentWeatherResponse.observe(viewLifecycleOwner, Observer {
@@ -124,6 +133,10 @@ class MainFragment : Fragment() {
                 currentWeather.main?.pressure, currentWeather.main?.tempMin,
                     currentWeather.main?.tempMax))
             currentRecycler.adapter = adapter
+
+            currentProgress.visibility = View.GONE
+            currentImageView.visibility = View.VISIBLE
+            btnForecast.visibility = View.VISIBLE
         })
     }
 
@@ -140,7 +153,13 @@ class MainFragment : Fragment() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun onClickForecast(v: View) {
+        val bundle = Bundle()
+        bundle.putString("current_latitude", lat)
+        bundle.putString("current_longitude", lon)
+
+        val forecastFragment = ForecastBottomFragment()
+        forecastFragment.arguments = bundle
         activity?.supportFragmentManager?.let {
-            ForecastBottomFragment().show(it, "forecast_fragment") }
+            forecastFragment.show(it, "forecast_fragment") }
     }
 }
