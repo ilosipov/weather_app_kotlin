@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ProgressBar
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -28,12 +30,14 @@ class ForecastBottomFragment : BottomSheetDialogFragment() {
 
     private lateinit var forecastRecycler : RecyclerView
     private lateinit var progressForecast : ProgressBar
+    private lateinit var animationRecycler : Animation
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_bottom_forecast, container, false)
 
         forecastRecycler = view.findViewById(R.id.recycler_forecast)
         progressForecast = view.findViewById(R.id.progress_forecast)
+        animationRecycler = AnimationUtils.loadAnimation(context, R.anim.anim_forecast_recycler)
 
         return view
     }
@@ -45,6 +49,7 @@ class ForecastBottomFragment : BottomSheetDialogFragment() {
             forecastWeather?.let {
                 val days: List<Day>? = forecastWeather.days
                 days?.let {
+                    forecastRecycler.startAnimation(animationRecycler)
                     forecastRecycler.layoutManager = LinearLayoutManager(context)
                     forecastRecycler.adapter = ForecastAdapter(context!!, R.layout.view_forecast, days)
                 }

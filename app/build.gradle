@@ -46,6 +46,8 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
     // Lottie
     implementation "com.airbnb.android:lottie:$lottie_version"
+    // Places API
+    implementation 'com.google.android.libraries.places:places:2.2.0'
 
     testImplementation 'junit:junit:4.13'
     
