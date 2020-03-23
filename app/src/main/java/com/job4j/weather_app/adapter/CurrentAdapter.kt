@@ -15,7 +15,8 @@ import com.job4j.weather_app.R
  * @version $Id$
  */
 
-class CurrentAdapter(var context: Context, var resource: Int, var currentInfo: Map<String, String>) :
+class CurrentAdapter(private var context: Context, private var resource: Int,
+                     private var currentInfo: Map<String, String>) :
     RecyclerView.Adapter<CurrentAdapter.CurrentViewHolder>() {
     private var keyArray = arrayListOf<String>()
     private var valueArray = arrayListOf<String>()

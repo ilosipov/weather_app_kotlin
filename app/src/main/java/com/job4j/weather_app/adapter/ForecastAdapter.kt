@@ -19,7 +19,8 @@ import java.util.*
  * @version $Id$
  */
 
-class ForecastAdapter(var context: Context, var resource: Int, private val days: List<Day>) :
+class ForecastAdapter(private var context: Context, private var resource: Int,
+                      private val days: List<Day>) :
     RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
 
     class ForecastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

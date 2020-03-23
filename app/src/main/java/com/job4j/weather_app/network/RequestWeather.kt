@@ -1,6 +1,5 @@
 package com.job4j.weather_app.network
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.job4j.weather_app.KEY_API
 import com.job4j.weather_app.UNITS
@@ -24,7 +23,6 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 
 class RequestWeather {
-    private val TAG = "RequestWeather"
     private val retrofit : Retrofit
 
     init {
@@ -46,12 +44,10 @@ class RequestWeather {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableSingleObserver<CurrentWeather>() {
                 override fun onSuccess(currentWeather: CurrentWeather) {
-                    Log.d(TAG, "onSuccess: $currentWeather")
                     callback.postValue(currentWeather)
                 }
 
                 override fun onError(error: Throwable) {
-                    Log.e(TAG, "onError: $error")
                     error.printStackTrace()
                 }
             })
@@ -63,12 +59,10 @@ class RequestWeather {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableSingleObserver<ForecastWeather>() {
                 override fun onSuccess(forecastWeather: ForecastWeather) {
-                    Log.d(TAG, "onSuccess: $forecastWeather")
                     callback.postValue(forecastWeather)
                 }
 
                 override fun onError(error: Throwable) {
-                    Log.e(TAG, "onError: $error")
                     error.printStackTrace()
                 }
             })

@@ -27,10 +27,21 @@ import com.job4j.weather_app.network.RequestWeather
 
 class ForecastBottomFragment : BottomSheetDialogFragment() {
     private val callbackForecastWeather = MutableLiveData<ForecastWeather>()
+    private val requestWeather = RequestWeather()
 
     private lateinit var forecastRecycler : RecyclerView
     private lateinit var progressForecast : ProgressBar
     private lateinit var animationRecycler : Animation
+
+    fun newInstance(lat: String, lon: String) : ForecastBottomFragment {
+        val bundle = Bundle()
+        bundle.putString("latitude_forecast", lat)
+        bundle.putString("longitude_forecast", lon)
+
+        val fragment = ForecastBottomFragment()
+        fragment.arguments = bundle
+        return fragment
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_bottom_forecast, container, false)
@@ -39,11 +50,14 @@ class ForecastBottomFragment : BottomSheetDialogFragment() {
         progressForecast = view.findViewById(R.id.progress_forecast)
         animationRecycler = AnimationUtils.loadAnimation(context, R.anim.anim_forecast_recycler)
 
+        updateUI(arguments?.get("latitude_forecast").toString(),
+            arguments?.get("longitude_forecast").toString())
+
         return view
     }
 
     private fun updateUI(lat: String, lon: String) {
-        RequestWeather().getForecastWeather(lat, lon, callbackForecastWeather)
+        requestWeather.getForecastWeather(lat, lon, callbackForecastWeather)
         forecastWeatherResponse.observe(viewLifecycleOwner, Observer {
                 forecastWeather: ForecastWeather? ->
             forecastWeather?.let {
@@ -60,15 +74,4 @@ class ForecastBottomFragment : BottomSheetDialogFragment() {
 
     private val forecastWeatherResponse : MutableLiveData<ForecastWeather>
         get() = callbackForecastWeather
-
-    override fun onStart() {
-        super.onStart()
-        val bundle = arguments
-        if (bundle != null) {
-            updateUI(
-                bundle.getString("current_latitude", ""),
-                bundle.getString("current_longitude", "")
-            )
-        }
-    }
 }

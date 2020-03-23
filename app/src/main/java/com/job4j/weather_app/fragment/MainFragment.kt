@@ -36,12 +36,13 @@ import com.job4j.weather_app.network.RequestWeather
  * Класс MainFragment - реализует представление главного экрана
  * @author Ilya Osipov (mailto:il.osipov.gm@gmail.com)
  * @since 16.03.2020
- * @verison $Id$
+ * @version $Id$
  */
 
 class MainFragment : Fragment() {
-    private val TAG = "MainFragment"
+    private val log = "MainFragment"
     private var locationPermissionGranted = false
+    private val requestWeather = RequestWeather()
     private val callbackCurrentWeather = MutableLiveData<CurrentWeather>()
 
     private var lat : String = ""
@@ -64,16 +65,17 @@ class MainFragment : Fragment() {
     private lateinit var animRight : Animation
     private lateinit var animCenter : Animation
     private lateinit var animBottom : Animation
+    private lateinit var animBtnRight : Animation
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        Log.d(TAG, "onCreateView: initialization MainFragment.")
         val view = inflater.inflate(R.layout.fragment_main, container, false)
 
         animTop = AnimationUtils.loadAnimation(context, R.anim.anim_current_top)
         animCenter = AnimationUtils.loadAnimation(context, R.anim.anim_current_center)
         animBottom = AnimationUtils.loadAnimation(context, R.anim.anim_current_bottom)
         animRight = AnimationUtils.loadAnimation(context, R.anim.anim_current_right)
+        animBtnRight = AnimationUtils.loadAnimation(context, R.anim.anim_btn_right)
 
         view.setOnClickListener { layoutFragment.visibility = View.INVISIBLE }
 
@@ -88,7 +90,6 @@ class MainFragment : Fragment() {
         currentRecycler = view.findViewById(R.id.recycler_current)
         currentImageView = view.findViewById(R.id.current_image_view)
         currentProgress = view.findViewById(R.id.current_progress_anim)
-
 
         btnForecast = view.findViewById(R.id.btn_forecast)
         btnForecast.setOnClickListener(this::onClickForecast)
@@ -105,7 +106,6 @@ class MainFragment : Fragment() {
     }
 
     private fun getLocationPermission() {
-        Log.d(TAG, "getLocationPermission: getting location permission.")
         val permissions = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -117,26 +117,26 @@ class MainFragment : Fragment() {
                 || ContextCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(permissions, REQUEST_LOCATION_PERMISSION)
-                Log.d(TAG, "getLocationPermission: request location false.")
+                Log.d(log, "getLocationPermission: request location false.")
             } else {
                 locationPermissionGranted = true
-                Log.d(TAG, "getLocationPermission: request location true.")
+                Log.d(log, "getLocationPermission: request location true.")
             }
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
         grantResults: IntArray) {
-        Log.d(TAG, "onRequestPermissionsResult: called.")
+        Log.d(log, "onRequestPermissionsResult: called.")
         when (requestCode) {
             REQUEST_LOCATION_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getCurrentLocation()
                     updateUI()
                     locationPermissionGranted = true
-                    Log.d(TAG, "onRequestPermissionsResult: locations permission true.")
+                    Log.d(log, "onRequestPermissionsResult: locations permission true.")
                 } else {
-                    Log.d(TAG, "onRequestPermissionsResult: location permission false.")
+                    Log.d(log, "onRequestPermissionsResult: location permission false.")
                 }
             }
         }
@@ -152,10 +152,11 @@ class MainFragment : Fragment() {
         get() = callbackCurrentWeather
 
     private fun updateUI() {
-        RequestWeather().getCurrentWeather(lat, lon, callbackCurrentWeather)
+        requestWeather.getCurrentWeather(lat, lon, callbackCurrentWeather)
         currentWeatherResponse.observe(viewLifecycleOwner, Observer {
                 currentWeather: CurrentWeather ->
-            initAnimation()
+            Log.d(log, "current Weather = $currentWeather")
+            Log.d(log, "Update")
 
             currentMain.text = currentWeather.weather!![0].main.trim()
             currentDesc.text = currentWeather.weather!![0].description.trim()
@@ -166,20 +167,28 @@ class MainFragment : Fragment() {
 
             currentRecycler.layoutManager = LinearLayoutManager(context,
                 LinearLayoutManager.HORIZONTAL, false)
-            val adapter = CurrentAdapter(context!!, R.layout.view_current,
-                initInfoMap(currentWeather.wind?.speed, currentWeather.main?.humidity,
-                currentWeather.main?.pressure, currentWeather.main?.tempMin, currentWeather.main?.tempMax))
+            val adapter = CurrentAdapter(
+                context!!, R.layout.view_current,
+                initInfoMap(
+                    currentWeather.wind?.speed,
+                    currentWeather.main?.humidity,
+                    currentWeather.main?.pressure,
+                    currentWeather.main?.tempMin,
+                    currentWeather.main?.tempMax))
             currentRecycler.adapter = adapter
-
             currentProgress.visibility = View.GONE
-            currentImageView.visibility = View.VISIBLE
-            btnForecast.visibility = View.VISIBLE
-            btnLocation.visibility = View.VISIBLE
-            btnSearch.visibility = View.VISIBLE
         })
+        initAnimation()
+
+        currentImageView.visibility = View.VISIBLE
+        btnForecast.visibility = View.VISIBLE
+        btnLocation.visibility = View.VISIBLE
+        btnSearch.visibility = View.VISIBLE
     }
 
     private fun initAnimation() {
+        btnSearch.startAnimation(animBtnRight)
+        btnLocation.startAnimation(animBtnRight)
         currentMain.startAnimation(animTop)
         currentIcon.startAnimation(animCenter)
         currentName.startAnimation(animCenter)
@@ -203,19 +212,14 @@ class MainFragment : Fragment() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun onClickForecast(v: View) {
-        val bundle = Bundle()
-        bundle.putString("current_latitude", lat)
-        bundle.putString("current_longitude", lon)
-
-        val forecastFragment = ForecastBottomFragment()
-        forecastFragment.arguments = bundle
+        val forecastFragment = ForecastBottomFragment().newInstance(lat, lon)
         activity?.supportFragmentManager?.let {
-            forecastFragment.show(it, "forecast_fragment") }
+            forecastFragment.show(it, "forecast_fragment")
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
     private fun onClickLocation(v: View) {
-        Log.d(TAG, "onClickLocation: click location.")
         getCurrentLocation()
         updateUI()
 
@@ -224,7 +228,6 @@ class MainFragment : Fragment() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun onClickSearch(v: View) {
-        Log.d(TAG, "onClickSearch: click search.")
         layoutFragment.startAnimation(animRight)
         layoutFragment.visibility = View.VISIBLE
 
@@ -234,7 +237,6 @@ class MainFragment : Fragment() {
         searchPlace.setPlaceFields(arrayListOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG))
         searchPlace.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
-                Log.d(TAG, "onClickSearch: onPlaceSelected: place = $place")
                 lat = place.latLng?.latitude.toString()
                 lon = place.latLng?.longitude.toString()
                 updateUI()
@@ -242,7 +244,6 @@ class MainFragment : Fragment() {
             }
 
             override fun onError(status: Status) {
-                Log.e(TAG, "onClickSearch: onError: status = $status")
                 layoutFragment.visibility = View.INVISIBLE
             }
         })

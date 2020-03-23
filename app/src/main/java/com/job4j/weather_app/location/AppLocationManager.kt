@@ -3,7 +3,6 @@ package com.job4j.weather_app.location
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -22,21 +21,22 @@ class AppLocationManager(context: Context) : LocationListener {
 
     private var locationManager : LocationManager =
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    private val criteria : Criteria = Criteria()
     private var longitude : String = ""
     private var latitude : String = ""
 
     init {
-        criteria.accuracy = Criteria.ACCURACY_FINE
-        val provider = locationManager.getBestProvider(criteria, true)
-
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
         }
-        val location = locationManager.getLastKnownLocation(provider!!)
-        onLocationChanged(location)
+        var location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        if (location == null) {
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            onLocationChanged(location)
+        } else {
+            onLocationChanged(location)
+        }
     }
 
     fun getLatitude() : String {
