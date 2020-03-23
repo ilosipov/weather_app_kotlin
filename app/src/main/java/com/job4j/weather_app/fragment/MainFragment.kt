@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -95,13 +96,12 @@ class MainFragment : Fragment() {
         btnForecast.setOnClickListener(this::onClickForecast)
 
         getLocationPermission()
-        if (locationPermissionGranted) {
-            getCurrentLocation()
-            updateUI()
+        getCurrentLocation()
+        updateUI()
 
-            btnLocation.setOnClickListener(this::onClickLocation)
-            btnSearch.setOnClickListener(this::onClickSearch)
-        }
+        btnLocation.setOnClickListener(this::onClickLocation)
+        btnSearch.setOnClickListener(this::onClickSearch)
+
         return view
     }
 
@@ -153,37 +153,39 @@ class MainFragment : Fragment() {
 
     private fun updateUI() {
         requestWeather.getCurrentWeather(lat, lon, callbackCurrentWeather)
-        currentWeatherResponse.observe(viewLifecycleOwner, Observer {
-                currentWeather: CurrentWeather ->
-            Log.d(log, "current Weather = $currentWeather")
-            Log.d(log, "Update")
+        currentWeatherResponse.observe(
+            viewLifecycleOwner,
+            Observer { currentWeather: CurrentWeather ->
+                Log.d(log, "current Weather = $currentWeather")
 
-            currentMain.text = currentWeather.weather!![0].main.trim()
-            currentDesc.text = currentWeather.weather!![0].description.trim()
-            currentTemp.text = String.format("%s°", currentWeather.main!!.temp.toInt())
-            currentName.text = currentWeather.name.trim()
-            currentIcon.setAnimation("${currentWeather.weather!![0].icon}.json")
-            currentIcon.playAnimation()
+                currentMain.text = currentWeather.weather!![0].main.trim()
+                currentDesc.text = currentWeather.weather!![0].description.trim()
+                currentTemp.text = String.format("%s°", currentWeather.main!!.temp.toInt())
+                currentName.text = currentWeather.name.trim()
+                currentIcon.setAnimation("${currentWeather.weather!![0].icon}.json")
+                currentIcon.playAnimation()
 
-            currentRecycler.layoutManager = LinearLayoutManager(context,
-                LinearLayoutManager.HORIZONTAL, false)
-            val adapter = CurrentAdapter(
-                context!!, R.layout.view_current,
-                initInfoMap(
-                    currentWeather.wind?.speed,
-                    currentWeather.main?.humidity,
-                    currentWeather.main?.pressure,
-                    currentWeather.main?.tempMin,
-                    currentWeather.main?.tempMax))
-            currentRecycler.adapter = adapter
-            currentProgress.visibility = View.GONE
-        })
-        initAnimation()
+                currentRecycler.layoutManager = LinearLayoutManager(context,
+                    LinearLayoutManager.HORIZONTAL, false)
+                val adapter = CurrentAdapter(
+                    context!!, R.layout.view_current,
+                    initInfoMap(
+                        currentWeather.wind?.speed,
+                        currentWeather.main?.humidity,
+                        currentWeather.main?.pressure,
+                        currentWeather.main?.tempMin,
+                        currentWeather.main?.tempMax
+                    )
+                )
+                currentRecycler.adapter = adapter
+                currentProgress.visibility = View.GONE
 
-        currentImageView.visibility = View.VISIBLE
-        btnForecast.visibility = View.VISIBLE
-        btnLocation.visibility = View.VISIBLE
-        btnSearch.visibility = View.VISIBLE
+                initAnimation()
+                currentImageView.visibility = View.VISIBLE
+                btnForecast.visibility = View.VISIBLE
+                btnLocation.visibility = View.VISIBLE
+                btnSearch.visibility = View.VISIBLE
+            })
     }
 
     private fun initAnimation() {
