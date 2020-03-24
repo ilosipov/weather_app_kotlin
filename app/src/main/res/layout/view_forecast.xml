@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/forecast_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
@@ -14,72 +15,206 @@
     android:stateListAnimator="@null"
     app:cardCornerRadius="10dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        tools:ignore="UselessLeaf">
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:orientation="vertical"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="4dp">
+            android:id="@+id/forecast_info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="2"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:id="@+id/forecast_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/nunito_bold"
+                    android:textColor="@color/colorTextDark"
+                    tools:ignore="NestedWeights">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/forecast_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:maxLines="1"
+                    android:fontFamily="@font/nunito_light"
+                    android:textColor="@color/colorTextLight">
+
+                </TextView>
+
+            </LinearLayout>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/forecast_icon"
+                android:layout_width="40dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true">
+
+            </com.airbnb.lottie.LottieAnimationView>
 
             <TextView
-                android:id="@+id/forecast_date"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:id="@+id/forecast_temp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textColor="@color/colorTextDark"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:gravity="center"
+                android:textSize="20sp"
                 android:fontFamily="@font/nunito_bold"
-                tools:ignore="NestedWeights">
-
-            </TextView>
-
-            <TextView
-                android:id="@+id/forecast_description"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:maxLines="1"
-                android:textColor="@color/colorTextLight"
-                android:fontFamily="@font/nunito_light">
+                android:textColor="@color/colorTextDark"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
             </TextView>
 
         </LinearLayout>
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/forecast_icon"
-            android:layout_width="40dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:layout_weight="1"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/forecast_detail_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/forecast_info_layout">
 
-        </com.airbnb.lottie.LottieAnimationView>
+            <LinearLayout
+                android:id="@+id/layout_wind"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/forecast_temp"
-            android:layout_width="10dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="4dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textColor="@color/colorTextDark"
-            android:fontFamily="@font/nunito_bold">
+                <TextView
+                    android:id="@+id/title_forecast_wind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/title_forecast_wind"
+                    android:textColor="@color/colorTextLight"
+                    android:fontFamily="@font/nunito_light">
 
-        </TextView>
+                </TextView>
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/forecast_wind"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorTextDark">
+
+                </TextView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_humidity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_wind">
+
+                <TextView
+                    android:id="@+id/title_forecast_humidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/title_forecast_humidity"
+                    android:textColor="@color/colorTextLight"
+                    android:fontFamily="@font/nunito_light">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/forecast_humidity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorTextDark">
+
+                </TextView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_pressure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_humidity">
+
+                <TextView
+                    android:id="@+id/title_forecast_pressure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/title_forecst_pressure"
+                    android:textColor="@color/colorTextLight"
+                    android:fontFamily="@font/nunito_light">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/forecast_pressure"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorTextDark">
+
+                </TextView>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

@@ -8,4 +8,8 @@
     <string name="title_max_temp">Max Temp</string>
     <string name="title_forecast">Forecast on 5 days</string>
     <string name="btn_forecast">Forecast</string>
+
+    <string name="title_forecast_wind">wind:</string>
+    <string name="title_forecast_humidity">humidity:</string>
+    <string name="title_forecst_pressure">pressure:</string>
 </resources>
