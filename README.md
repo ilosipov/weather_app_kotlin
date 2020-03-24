@@ -14,7 +14,7 @@ and fin out more detailed weather for 5 days.
 Screen
 ------
 ![sample](./image/screen_weather_app.png)
-![gif](./image/animation_weather_app.gif)
+![IMG_fodpgq](https://user-images.githubusercontent.com/39967797/77428976-00b72980-6dea-11ea-94b6-17077a0afd75.gif)
 
 Contact
 -------
