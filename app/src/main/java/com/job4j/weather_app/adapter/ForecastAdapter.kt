@@ -58,15 +58,19 @@ class ForecastAdapter(private var context: Context, private var resource: Int,
         val pressure = holder.itemView.findViewById<TextView>(R.id.forecast_pressure)
         pressure.text = String.format("%smm", day.main!!.pressure.toInt())
 
+        val detailsLayout = holder.itemView.findViewById<ConstraintLayout>(R.id.forecast_detail_layout)
         itemView.setOnClickListener {
             val forecastCard = holder.itemView.findViewById<CardView>(R.id.forecast_card_view)
-            val detailsLayout = holder.itemView.findViewById<ConstraintLayout>(R.id.forecast_detail_layout)
+
             if (detailsLayout.visibility == View.GONE) {
                 TransitionManager.beginDelayedTransition(forecastCard, AutoTransition())
                 detailsLayout.visibility = View.VISIBLE
             } else {
                 detailsLayout.visibility = View.GONE
             }
+        }
+        if (holder.isRecyclable) {
+            detailsLayout.visibility = View.GONE
         }
     }
 
